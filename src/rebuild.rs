@@ -94,8 +94,7 @@ pub(crate) fn command_rebuild(cli: &Cli, rebuild_args: &RebuildArgs) -> CliResul
 
     command.args(&rebuild_args.args);
 
-    let mut child = command.spawn().unwrap();
-    let _result = child.wait().unwrap();
+    let _result = command.spawn().unwrap().wait().unwrap();
 
     Ok(())
 }
@@ -125,8 +124,7 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
         command.arg("--install-bootloader");
     }
 
-    let mut child = command.spawn().unwrap();
-    let _result = child.wait().unwrap();
+    let _result = command.spawn().unwrap().wait().unwrap();
 
     Ok(())
 }

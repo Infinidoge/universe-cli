@@ -31,22 +31,17 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
-    Update {
-        inputs: Option<Vec<String>>,
-    },
+    Update { inputs: Option<Vec<String>> },
+
     Rebuild {
         #[command(flatten)]
         rebuild_args: RebuildArgs,
     },
-    Edit {
-        path: PathBuf,
-    },
-    Cd {
-        path: Option<PathBuf>,
-    },
 
-    // Shortcuts
-    // Quick Rebuild
+    Edit { path: PathBuf },
+
+    Cd { path: Option<PathBuf> },
+
     B {
         #[command(flatten)]
         rebuild_args: QuickRebuildArgs,
@@ -57,7 +52,7 @@ fn main() -> CliExit {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Update { ref inputs } => command_update(&cli, &inputs),
+        Commands::Update { ref inputs } => command_update(&cli, inputs),
         Commands::Rebuild { ref rebuild_args } => command_rebuild(&cli, rebuild_args),
         Commands::B { ref rebuild_args } => command_quick_rebuild(&cli, rebuild_args),
         Commands::Edit { ref path } => command_edit(&cli, path),

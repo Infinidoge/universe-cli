@@ -1,11 +1,9 @@
-use std::{env::set_current_dir, path::Path, path::PathBuf};
+use std::path::{Path, PathBuf};
 
 use edit::edit_file;
 
-use crate::{
-    helpers::{find_flake_root, CliResult, UniverseCliError},
-    Cli,
-};
+use crate::helpers::{find_flake_root, CliResult, UniverseCliError};
+use crate::Cli;
 
 impl From<std::io::Error> for UniverseCliError {
     fn from(value: std::io::Error) -> Self {
