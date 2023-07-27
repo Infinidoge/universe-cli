@@ -39,7 +39,7 @@ pub(crate) fn command_cd(cli: &Cli, path: &Option<PathBuf>) -> CliResult<()> {
     };
 
     if path.is_dir() {
-        println!("{}", path.canonicalize()?.as_os_str().to_str().unwrap());
+        println!("{}", path.canonicalize()?.as_os_str().to_str().unwrap()); // TODO: Handle failed str conversion
         Ok(())
     } else {
         Err(UniverseCliError::InvalidDirectory)
