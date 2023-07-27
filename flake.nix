@@ -14,6 +14,7 @@
     devshell.inputs.nixpkgs.follows = "nixpkgs";
 
     rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs@{ self, nixpkgs, crane, flake-parts, rust-overlay, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
