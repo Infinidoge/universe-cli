@@ -12,7 +12,7 @@ mod update;
 use update::command_update;
 
 mod misc;
-use misc::{command_cd, command_edit};
+use misc::{command_cd, command_edit, command_gc, GcArgs};
 
 const DEFAULT_FLAKE_ROOT: &str = "/etc/nixos";
 
@@ -26,6 +26,10 @@ struct Cli {
     #[arg(short, long)]
     /// Pass `--verbose` to supported Nix commands
     verbose: bool,
+
+    #[arg(long)]
+    /// Pass `--quiet` to supported Nix commands
+    quiet: bool,
 
     #[command(subcommand)]
     command: Commands,
@@ -53,6 +57,12 @@ enum Commands {
         #[command(flatten)]
         rebuild_args: QuickRebuildArgs,
     },
+
+    /// College garbage for both the current user and root
+    Gc {
+        #[command(flatten)]
+        gc_args: GcArgs,
+    },
 }
 
 fn main() -> CliExit {
@@ -64,6 +74,7 @@ fn main() -> CliExit {
         Commands::B { ref rebuild_args } => command_quick_rebuild(&cli, rebuild_args),
         Commands::Edit { ref path } => command_edit(&cli, path),
         Commands::Cd { ref path } => command_cd(&cli, path),
+        Commands::Gc { ref gc_args } => command_gc(&cli, gc_args),
     }
     .into()
 }
