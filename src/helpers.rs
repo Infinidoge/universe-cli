@@ -1,9 +1,6 @@
-use colored::Colorize;
 use std::error;
 use std::fmt;
-use std::io::{self, Write};
-use std::process::ExitCode;
-use std::process::Termination;
+use std::process::{ExitCode, Termination};
 
 mod flake_root;
 pub(crate) use flake_root::find_flake_root;
@@ -11,14 +8,6 @@ use flake_root::FlakeRootError;
 
 mod nix_command;
 pub(crate) use nix_command::build_nix_command;
-
-pub(crate) fn handle_output(output: std::process::Output, error_message: &str) {
-    if !output.status.success() {
-        eprintln!("{} {}", "error:".red(), error_message);
-    }
-    io::stdout().write_all(&output.stdout).unwrap();
-    io::stderr().write_all(&output.stderr).unwrap();
-}
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum UniverseCliError {

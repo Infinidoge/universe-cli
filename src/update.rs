@@ -1,4 +1,4 @@
-use crate::helpers::{build_nix_command, handle_output, CliResult, UniverseCliError};
+use crate::helpers::{build_nix_command, CliResult, UniverseCliError};
 use crate::Cli;
 
 pub(crate) fn command_update(cli: &Cli, inputs: &Option<Vec<String>>) -> CliResult<()> {
@@ -16,19 +16,18 @@ pub(crate) fn command_update(cli: &Cli, inputs: &Option<Vec<String>>) -> CliResu
 
             command.arg("lock").args(input_args);
 
-            let Ok(output) = command.output() else {
+            if !command.spawn()?.wait()?.success() {
                 return Err(UniverseCliError::FailedToExecuteNix);
             };
-            handle_output(output, "Updating failed");
         }
         None => {
             println!("Updating all inputs");
 
-            let Ok( output ) = command.arg("update").output() else {
+            command.arg("update");
+
+            if !command.spawn()?.wait()?.success() {
                 return Err(UniverseCliError::FailedToExecuteNix);
             };
-
-            handle_output(output, "Updating failed");
         }
     }
 

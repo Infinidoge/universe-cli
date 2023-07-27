@@ -87,8 +87,9 @@ pub(crate) fn command_gc(cli: &Cli, gc_args: &GcArgs) -> CliResult<()> {
     add_gc_arguments(&mut user, cli, gc_args);
     add_gc_arguments(&mut root, cli, gc_args);
 
-    let _user_result = user.spawn().unwrap().wait().unwrap();
-    let _root_result = user.spawn().unwrap().wait().unwrap();
+    if !user.spawn()?.wait()?.success() || !root.spawn()?.wait()?.success() {
+        return Err(UniverseCliError::FailedToExecuteNix);
+    };
 
     Ok(())
 }

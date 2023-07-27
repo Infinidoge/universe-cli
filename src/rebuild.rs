@@ -103,7 +103,9 @@ pub(crate) fn command_rebuild(cli: &Cli, rebuild_args: &RebuildArgs) -> CliResul
 
     command.args(&rebuild_args.args);
 
-    let _result = command.spawn().unwrap().wait().unwrap();
+    if !command.spawn()?.wait()?.success() {
+        return Err(UniverseCliError::FailedToExecuteNix);
+    };
 
     Ok(())
 }
@@ -147,7 +149,9 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
         command.arg(profile_name);
     }
 
-    let _result = command.spawn().unwrap().wait().unwrap();
+    if !command.spawn()?.wait()?.success() {
+        return Err(UniverseCliError::FailedToExecuteNix);
+    };
 
     Ok(())
 }
