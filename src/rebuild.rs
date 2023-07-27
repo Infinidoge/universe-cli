@@ -27,6 +27,9 @@ pub(crate) struct QuickRebuildArgs {
 
     #[arg(long)]
     show_trace: bool,
+
+    #[arg(long)]
+    rollback: bool,
 }
 
 fn build_rebuild_command(cli: &Cli) -> CliResult<Command> {
@@ -122,6 +125,20 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
 
     if rebuild_args.install_bootloader {
         command.arg("--install-bootloader");
+    }
+
+    if rebuild_args.rollback {
+        command.arg("--rollback");
+    }
+
+    if let Some(specialisation) = &rebuild_args.specialisation {
+        command.arg("--specialisation");
+        command.arg(specialisation);
+    }
+
+    if let Some(profile_name) = &rebuild_args.profile_name {
+        command.arg("--profile-name");
+        command.arg(profile_name);
     }
 
     let _result = command.spawn().unwrap().wait().unwrap();
