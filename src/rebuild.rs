@@ -11,24 +11,30 @@ use which::which;
 #[derive(Args, Debug, Clone)]
 pub(crate) struct QuickRebuildArgs {
     #[arg(short, long)]
+    /// Specify a profile name for the new configuration
     profile_name: Option<String>,
 
     #[arg(short = 'c', long)]
+    /// Activate the given specialisation
     specialisation: Option<String>,
 
     #[arg(long)]
+    /// Build a specific flake input
     flake: Option<String>,
 
     #[arg(long)]
+    /// (Re)install the bootloader
     install_bootloader: bool,
 
     #[arg(long)]
+    /// Skip building Nix, to rebuild faster
     fast: bool,
 
     #[arg(long)]
     show_trace: bool,
 
     #[arg(long)]
+    /// Roll back to the previous configuration
     rollback: bool,
 }
 

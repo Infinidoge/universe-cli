@@ -20,9 +20,11 @@ const DEFAULT_FLAKE_ROOT: &str = "/etc/nixos";
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[arg(long)]
+    /// Path to the flake root to operate on
     flake_root: Option<String>,
 
     #[arg(short, long)]
+    /// Pass `--verbose` to supported Nix commands
     verbose: bool,
 
     #[command(subcommand)]
@@ -31,17 +33,22 @@ struct Cli {
 
 #[derive(Debug, Subcommand)]
 enum Commands {
+    /// Update all or a subset of all flake inputs
     Update { inputs: Option<Vec<String>> },
 
+    /// NixOS rebuild with the flake root pre-selected
     Rebuild {
         #[command(flatten)]
         rebuild_args: RebuildArgs,
     },
 
+    /// Open a file relative to flake root in $EDITOR
     Edit { path: PathBuf },
 
+    /// Print absolute path to the given file relative to the flake root
     Cd { path: Option<PathBuf> },
 
+    /// Rebuild switch shortcut
     B {
         #[command(flatten)]
         rebuild_args: QuickRebuildArgs,
