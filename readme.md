@@ -1,4 +1,4 @@
-# `universe-cli`: An Opinioned Management CLI for Flake-based NixOS
+# `universe-cli`: An Opinionated Management CLI for Flake-Based NixOS Configurations
 
 Originally based on my scripts for `bud`, `universe-cli` replaces all that I used `bud` for, and more.
 This tool is specifically designed for my needs, and to complement [my configuration, my universe](https://github.com/Infinidoge/universe).
@@ -12,7 +12,12 @@ If one isn't provided, it will check for a `flake.nix` in `/etc/nixos`, and if p
 # TODO
 
 - [ ] Improve readme
-- [ ] Add more metadata to [Cargo.toml](./Cargo.toml)
-- [ ] Add help text to subcommands
+- [x] Add more metadata to [Cargo.toml](./Cargo.toml)
+- [x] Add help text to subcommands
 - [ ] Create something to make use of `universe-cli cd`
 - [ ] Add NixOS/Home Manager module for automatic installation (including `universe-cli cd` setup)
+
+# Ideas
+
+- Add a system for external subcommands so it is extensible
+  - Git/Cargo style, automatically deferring to executables named `universe-cli-$NAME`?
