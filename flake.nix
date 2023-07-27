@@ -17,50 +17,24 @@
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, crane, flake-parts, rust-overlay, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs@{ self, nixpkgs, flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
     systems = [
       "x86_64-linux"
     ];
 
     imports = [
       inputs.devshell.flakeModule
+      ./pkgs.nix
     ];
 
-    perSystem = { config, pkgs, system, ... }:
-      let
-        rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" ];
-        };
+    perSystem = { config, ... }: {
+      apps.default.program = config.packages.default;
 
-        craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
-
-        commonArgs = {
-          src = craneLib.cleanCargoSource (craneLib.path ./.);
-        };
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
-        universe-cli = craneLib.buildPackage (commonArgs // {
-          inherit cargoArtifacts;
-          meta.mainProgram = "universe-cli";
-        });
-      in
-      {
-        _module.args.pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ rust-overlay.overlays.default ];
-        };
-
-        packages.default = universe-cli;
-        apps.default.program = config.packages.default;
-
-        devshells.default.devshell = {
-          # name = "${universe-cli.meta.mainProgram}-devshell";
-
-          packagesFrom = [ universe-cli ];
-
-          packages = with pkgs; [
-            rustToolchain
-          ];
-        };
+      devshells.default.devshell = {
+        name = config.packages.default.meta.mainProgram;
+        motd = "";
+        packagesFrom = [ config.packages.default ];
       };
+    };
   };
 }
