@@ -3,6 +3,9 @@ name = "universe-cli"
 version = "0.1.0"
 edition = "2021"
 description = "A CLI tool for managing NixOS configurations"
+authors = ["Infinidoge"]
+repository = "https://github.com/Infinidoge/universe-cli"
+license = "MIT"
 
 [dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
