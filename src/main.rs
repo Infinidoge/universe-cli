@@ -8,6 +8,9 @@ use helpers::CliExit;
 mod rebuild;
 use rebuild::{command_quick_rebuild, command_rebuild, QuickRebuildArgs, RebuildArgs};
 
+mod run;
+use run::{command_run, RunArgs};
+
 mod update;
 use update::command_update;
 
@@ -46,6 +49,12 @@ enum Commands {
         rebuild_args: RebuildArgs,
     },
 
+    /// Run a flake output from the flake root
+    Run {
+        #[command(flatten)]
+        run_args: RunArgs,
+    },
+
     /// Open a file relative to flake root in $EDITOR
     Edit { path: PathBuf },
 
@@ -71,6 +80,7 @@ fn main() -> CliExit {
     match cli.command {
         Commands::Update { ref inputs } => command_update(&cli, inputs),
         Commands::Rebuild { ref rebuild_args } => command_rebuild(&cli, rebuild_args),
+        Commands::Run { ref run_args } => command_run(&cli, run_args),
         Commands::B { ref rebuild_args } => command_quick_rebuild(&cli, rebuild_args),
         Commands::Edit { ref path } => command_edit(&cli, path),
         Commands::Cd { ref path } => command_cd(&cli, path),

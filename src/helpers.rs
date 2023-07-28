@@ -3,8 +3,7 @@ use std::fmt;
 use std::process::{ExitCode, Termination};
 
 mod flake_root;
-pub(crate) use flake_root::find_flake_root;
-use flake_root::FlakeRootError;
+pub(crate) use flake_root::{find_flake_root, FlakeRootError};
 
 mod nix_command;
 pub(crate) use nix_command::build_nix_command;
@@ -13,6 +12,7 @@ pub(crate) use nix_command::build_nix_command;
 pub(crate) enum UniverseCliError {
     CommandNotFound,
     InvalidFlakeRoot(FlakeRootError),
+    FlakeRootMissing,
     IoError(std::io::ErrorKind),
     FailedToExecuteNix,
     InvalidDirectory,
@@ -24,6 +24,7 @@ impl fmt::Display for UniverseCliError {
         match *self {
             CommandNotFound => write!(f, "failed to execute nix: command not found"),
             InvalidFlakeRoot(e) => write!(f, "invalid flake root: {e}"),
+            FlakeRootMissing => write!(f, "no flake root specified or detected"),
             FailedToExecuteNix => write!(f, "failed to execute nix"),
             IoError(e) => write!(f, "io error: {e}"),
             InvalidDirectory => write!(f, "invalid directory"),
