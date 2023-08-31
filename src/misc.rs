@@ -52,9 +52,11 @@ pub(crate) struct GcArgs {
     /// Delete all old generations for all profiles
     delete_old: bool,
 
+    #[arg(long)]
     /// Delete generations older than the given period
     delete_older_than: Option<String>,
 
+    #[arg(long)]
     dry_run: bool,
 }
 
