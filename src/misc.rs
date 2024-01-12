@@ -15,7 +15,7 @@ impl From<std::io::Error> for UniverseCliError {
 
 pub(crate) fn command_edit(cli: &Cli, path: &PathBuf) -> CliResult<()> {
     let path = if let Some(base_path) = find_flake_root(cli)? {
-        Path::new(base_path).join(path)
+        Path::new(base_path.as_str()).join(path)
     } else {
         Path::new(path).to_path_buf()
     };
@@ -30,7 +30,7 @@ pub(crate) fn command_cd(cli: &Cli, path: &Option<PathBuf>) -> CliResult<()> {
         return Ok(());
     };
 
-    let base_path = Path::new(base_path);
+    let base_path = Path::new(base_path.as_str());
 
     let path = if let Some(path) = path {
         base_path.join(path)
