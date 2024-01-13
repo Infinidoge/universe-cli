@@ -1,6 +1,7 @@
-use crate::{Cli, DEFAULT_FLAKE_ROOT, FLAKE_ROOT_ENV_VAR};
+use crate::helpers::env;
+use crate::{Cli, DEFAULT_FLAKE_ROOT};
 use std::path::Path;
-use std::{env, error, fmt};
+use std::{error, fmt};
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum FlakeRootError {
@@ -35,18 +36,14 @@ fn check_flake_root(flake_root: &str) -> Result<&str, FlakeRootError> {
 }
 
 pub(crate) fn find_flake_root(cli: &Cli) -> Result<Option<String>, FlakeRootError> {
-    if let Some(flake_root) = &cli.flake_root {
-        return Ok(Some(check_flake_root(flake_root)?.to_owned()));
-    }
-
-    if let Ok(env_value) = env::var(FLAKE_ROOT_ENV_VAR) {
+    Ok(if let Some(flake_root) = &cli.flake_root {
+        Some(check_flake_root(flake_root)?.to_owned())
+    } else if let Ok(env_value) = env("FLAKE_ROOT") {
         check_flake_root(env_value.as_str())?;
-        return Ok(Some(env_value));
-    }
-
-    if let Ok(default_root) = check_flake_root(DEFAULT_FLAKE_ROOT) {
-        Ok(Some(default_root.to_owned()))
+        Some(env_value)
+    } else if let Ok(default_root) = check_flake_root(DEFAULT_FLAKE_ROOT) {
+        Some(default_root.to_owned())
     } else {
-        Ok(None)
-    }
+        None
+    })
 }

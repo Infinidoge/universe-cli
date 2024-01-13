@@ -18,7 +18,7 @@ mod misc;
 use misc::{command_cd, command_edit, command_gc, GcArgs};
 
 const DEFAULT_FLAKE_ROOT: &str = "/etc/nixos";
-const FLAKE_ROOT_ENV_VAR: &str = "UNIVERSE_FLAKE_ROOT";
+const ENV_VAR_PREFIX: &str = "UNIVERSE";
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]

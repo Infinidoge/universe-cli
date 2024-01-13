@@ -8,6 +8,8 @@ pub(crate) use flake_root::{find_flake_root, FlakeRootError};
 mod nix_command;
 pub(crate) use nix_command::build_nix_command;
 
+use crate::ENV_VAR_PREFIX;
+
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum UniverseCliError {
     CommandNotFound,
@@ -66,4 +68,7 @@ impl Termination for CliExit {
             }
         }
     }
+}
+pub(crate) fn env(var: &str) -> Result<String, std::env::VarError> {
+    std::env::var(format!("{}_{}", ENV_VAR_PREFIX, var))
 }
