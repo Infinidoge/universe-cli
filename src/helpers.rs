@@ -1,5 +1,6 @@
 use std::error;
 use std::fmt;
+use std::path::Path;
 use std::process::{ExitCode, Termination};
 
 mod flake_root;
@@ -69,6 +70,11 @@ impl Termination for CliExit {
         }
     }
 }
+
+pub(crate) fn is_nixos() -> bool {
+    Path::new("/etc/NIXOS").exists()
+}
+
 pub(crate) fn env(var: &str) -> Result<String, std::env::VarError> {
     std::env::var(format!("{}_{}", ENV_VAR_PREFIX, var))
 }

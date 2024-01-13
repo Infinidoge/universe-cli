@@ -1,7 +1,9 @@
 use std::ffi::OsString;
 use std::process::Command;
 
+use crate::helpers::env;
 use crate::helpers::find_flake_root;
+use crate::helpers::is_nixos;
 use crate::helpers::CliResult;
 use crate::helpers::UniverseCliError;
 use crate::Cli;
@@ -52,6 +54,30 @@ fn build_rebuild_command(cli: &Cli) -> CliResult<Command> {
     }
 
     Ok(command)
+}
+
+fn build_hm_command(cli: &Cli) -> CliResult<Command> {
+    if let Err(_) = which("home-manager") {
+        return Err(UniverseCliError::CommandNotFound);
+    }
+
+    let mut command = Command::new("home-manager");
+
+    if cli.verbose {
+        command.arg("--verbose");
+    }
+
+    Ok(command)
+}
+
+fn run_command(command: &str) -> String {
+    String::from_utf8(
+        Command::new(command)
+            .output()
+            .expect("trivial command errored on run")
+            .stdout,
+    )
+    .expect("trivial command returned invalid string")
 }
 
 // https://stackoverflow.com/questions/75611314/how-can-i-make-clap-ignore-flags-after-a-certain-subcommand
@@ -111,14 +137,25 @@ pub(crate) fn command_rebuild(cli: &Cli, rebuild_args: &RebuildArgs) -> CliResul
 }
 
 pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) -> CliResult<()> {
-    let mut command = build_rebuild_command(cli)?;
+    let mut command = if is_nixos() {
+        build_rebuild_command(cli)?
+    } else {
+        build_hm_command(cli)?
+    };
 
     if let Some(flake) = &rebuild_args.flake {
         command.arg("--flake");
         command.arg(flake);
     } else if let Some(flake_root) = find_flake_root(cli)? {
         command.arg("--flake");
-        command.arg(flake_root);
+        if is_nixos() {
+            command.arg(flake_root.clone());
+        } else {
+            let username = env("USERNAME").unwrap_or(run_command("whoami").trim_end().to_owned());
+            let hostname = env("HOSTNAME").unwrap_or(run_command("hostname").trim_end().to_owned());
+
+            command.arg(format!("{}#{}@{}", flake_root, username, hostname));
+        }
     }
 
     command.arg("switch");
@@ -127,26 +164,28 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
         command.arg("--show-trace");
     }
 
-    if rebuild_args.fast {
-        command.arg("--fast");
-    }
+    if is_nixos() {
+        if rebuild_args.fast {
+            command.arg("--fast");
+        }
 
-    if rebuild_args.install_bootloader {
-        command.arg("--install-bootloader");
-    }
+        if rebuild_args.install_bootloader {
+            command.arg("--install-bootloader");
+        }
 
-    if rebuild_args.rollback {
-        command.arg("--rollback");
-    }
+        if rebuild_args.rollback {
+            command.arg("--rollback");
+        }
 
-    if let Some(specialisation) = &rebuild_args.specialisation {
-        command.arg("--specialisation");
-        command.arg(specialisation);
-    }
+        if let Some(specialisation) = &rebuild_args.specialisation {
+            command.arg("--specialisation");
+            command.arg(specialisation);
+        }
 
-    if let Some(profile_name) = &rebuild_args.profile_name {
-        command.arg("--profile-name");
-        command.arg(profile_name);
+        if let Some(profile_name) = &rebuild_args.profile_name {
+            command.arg("--profile-name");
+            command.arg(profile_name);
+        }
     }
 
     if !command.spawn()?.wait()?.success() {
