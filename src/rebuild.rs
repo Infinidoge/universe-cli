@@ -162,6 +162,7 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
 
     if rebuild_args.show_trace {
         command.arg("--show-trace");
+        command.arg("--no-eval-cache");
     }
 
     if is_nixos() {
