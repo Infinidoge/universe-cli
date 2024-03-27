@@ -17,22 +17,13 @@
     devshell.inputs.nixpkgs.follows = "nixpkgs";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Follow rust-overlay
-    crane.inputs.rust-overlay.follows = "rust-overlay";
-
     # Follow flake-utils
     flake-utils.url = "github:numtide/flake-utils";
-    crane.inputs.flake-utils.follows = "flake-utils";
     rust-overlay.inputs.flake-utils.follows = "flake-utils";
 
     # Follow systems
     systems.url = "github:nix-systems/default";
     flake-utils.inputs.systems.follows = "systems";
-    devshell.inputs.systems.follows = "systems";
-
-    # Blank out
-    blank.url = "github:divnix/blank";
-    crane.inputs.flake-compat.follows = "blank";
   };
 
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
