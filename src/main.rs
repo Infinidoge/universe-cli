@@ -15,7 +15,7 @@ mod update;
 use update::command_update;
 
 mod misc;
-use misc::{command_cd, command_edit, command_gc, GcArgs};
+use misc::{command_cd, command_edit, command_gc, command_init, GcArgs};
 
 const DEFAULT_FLAKE_ROOT: &str = "/etc/nixos";
 const ENV_VAR_PREFIX: &str = "UNIVERSE";
@@ -73,6 +73,10 @@ enum Commands {
         #[command(flatten)]
         gc_args: GcArgs,
     },
+
+    Init {
+        template: Option<String>,
+    },
 }
 
 fn main() -> CliExit {
@@ -86,6 +90,7 @@ fn main() -> CliExit {
         Commands::Edit { ref path } => command_edit(&cli, path),
         Commands::Cd { ref path } => command_cd(&cli, path),
         Commands::Gc { ref gc_args } => command_gc(&cli, gc_args),
+        Commands::Init { ref template } => command_init(&cli, template),
     }
     .into()
 }

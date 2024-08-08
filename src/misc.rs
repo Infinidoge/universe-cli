@@ -95,3 +95,31 @@ pub(crate) fn command_gc(cli: &Cli, gc_args: &GcArgs) -> CliResult<()> {
 
     Ok(())
 }
+
+pub(crate) fn command_init(cli: &Cli, template: &Option<String>) -> CliResult<()> {
+    // TODO: Modify build_nix_command to support not adding flake root
+    let mut command = Command::new("nix");
+    command.arg("flake");
+    command.arg("init");
+
+    if cli.verbose {
+        command.arg("--verbose");
+    }
+
+    command.arg("--template");
+
+    let mut template_arg = "universe".to_owned();
+
+    if let Some(template) = template {
+        template_arg.push_str("#");
+        template_arg.push_str(template);
+    }
+
+    command.arg(template_arg);
+
+    if !command.spawn()?.wait()?.success() {
+        return Err(UniverseCliError::FailedToExecuteNix);
+    }
+
+    Ok(())
+}
