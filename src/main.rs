@@ -42,7 +42,9 @@ struct Cli {
 #[derive(Debug, Subcommand)]
 enum Commands {
     /// Update all or a subset of all flake inputs
-    Update { inputs: Option<Vec<String>> },
+    Update {
+        inputs: Option<Vec<String>>,
+    },
 
     /// NixOS rebuild with the flake root pre-selected
     Rebuild {
@@ -57,10 +59,14 @@ enum Commands {
     },
 
     /// Open a file relative to flake root in $EDITOR
-    Edit { path: PathBuf },
+    Edit {
+        path: PathBuf,
+    },
 
     /// Print absolute path to the given file relative to the flake root
-    Cd { path: Option<PathBuf> },
+    Cd {
+        path: Option<PathBuf>,
+    },
 
     /// Rebuild switch shortcut
     B {
