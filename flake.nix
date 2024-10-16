@@ -12,18 +12,9 @@
 
     ### Cleanup ###
     # Follow nixpkgs
-    crane.inputs.nixpkgs.follows = "nixpkgs";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
-
-    # Follow flake-utils
-    flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay.inputs.flake-utils.follows = "flake-utils";
-
-    # Follow systems
-    systems.url = "github:nix-systems/default";
-    flake-utils.inputs.systems.follows = "systems";
   };
 
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }: flake-parts.lib.mkFlake { inherit inputs; } {
