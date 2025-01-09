@@ -38,6 +38,9 @@ pub(crate) struct QuickRebuildArgs {
     #[arg(long)]
     /// Roll back to the previous configuration
     rollback: bool,
+
+    #[arg(long)]
+    offline: bool,
 }
 
 fn build_rebuild_command(cli: &Cli) -> CliResult<Command> {
@@ -176,6 +179,10 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
 
         if rebuild_args.rollback {
             command.arg("--rollback");
+        }
+
+        if rebuild_args.offline {
+            command.arg("--offline");
         }
 
         if let Some(specialisation) = &rebuild_args.specialisation {
