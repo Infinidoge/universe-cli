@@ -2,8 +2,7 @@ use std::ffi::OsString;
 use std::process::Command;
 
 use crate::helpers::{
-    env, find_flake_root, get_rebuild_mode, run_command, spawn_command, CliResult,
-    UniverseCliError,
+    env, find_flake_root, is_nixos, run_command, spawn_command, CliResult, UniverseCliError,
 };
 use crate::Cli;
 use clap::Args;
