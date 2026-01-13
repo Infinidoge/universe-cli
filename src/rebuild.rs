@@ -1,11 +1,10 @@
 use std::ffi::OsString;
 use std::process::Command;
 
-use crate::helpers::env;
-use crate::helpers::find_flake_root;
-use crate::helpers::is_nixos;
-use crate::helpers::CliResult;
-use crate::helpers::UniverseCliError;
+use crate::helpers::{
+    env, find_flake_root, get_rebuild_mode, run_command, spawn_command, CliResult,
+    UniverseCliError,
+};
 use crate::Cli;
 use clap::Args;
 use which::which;
@@ -73,16 +72,6 @@ fn build_hm_command(cli: &Cli) -> CliResult<Command> {
     Ok(command)
 }
 
-fn run_command(command: &str) -> String {
-    String::from_utf8(
-        Command::new(command)
-            .output()
-            .expect("trivial command errored on run")
-            .stdout,
-    )
-    .expect("trivial command returned invalid string")
-}
-
 // https://stackoverflow.com/questions/75611314/how-can-i-make-clap-ignore-flags-after-a-certain-subcommand
 #[derive(Debug)]
 pub struct RebuildArgs {
@@ -132,11 +121,7 @@ pub(crate) fn command_rebuild(cli: &Cli, rebuild_args: &RebuildArgs) -> CliResul
 
     command.args(&rebuild_args.args);
 
-    if !command.spawn()?.wait()?.success() {
-        return Err(UniverseCliError::FailedToExecuteNix);
-    };
-
-    Ok(())
+    spawn_command(command)
 }
 
 pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) -> CliResult<()> {
@@ -196,9 +181,5 @@ pub(crate) fn command_quick_rebuild(cli: &Cli, rebuild_args: &QuickRebuildArgs) 
         }
     }
 
-    if !command.spawn()?.wait()?.success() {
-        return Err(UniverseCliError::FailedToExecuteNix);
-    };
-
-    Ok(())
+    spawn_command(command)
 }

@@ -1,17 +1,17 @@
 use std::error;
 use std::fmt;
 use std::path::Path;
-use std::process::{ExitCode, Termination};
+use std::process::{Command, ExitCode, Termination};
 
 mod flake_root;
 pub(crate) use flake_root::{find_flake_root, FlakeRootError};
 
 mod nix_command;
-pub(crate) use nix_command::build_nix_command;
+pub(crate) use nix_command::{build_nix_command, spawn_command};
 
 use crate::ENV_VAR_PREFIX;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub(crate) enum UniverseCliError {
     CommandNotFound,
     InvalidFlakeRoot(FlakeRootError),
@@ -77,4 +77,14 @@ pub(crate) fn is_nixos() -> bool {
 
 pub(crate) fn env(var: &str) -> Result<String, std::env::VarError> {
     std::env::var(format!("{}_{}", ENV_VAR_PREFIX, var))
+}
+
+pub(crate) fn run_command(command: &str) -> String {
+    String::from_utf8(
+        Command::new(command)
+            .output()
+            .expect("trivial command errored on run")
+            .stdout,
+    )
+    .expect("trivial command returned invalid string")
 }
