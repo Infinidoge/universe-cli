@@ -48,7 +48,7 @@ fn build_rebuild_command(cli: &Cli) -> CliResult<Command> {
     }
 
     let mut command = Command::new("nixos-rebuild");
-    command.arg("--use-remote-sudo");
+    command.arg("--sudo");
 
     if cli.verbose {
         command.arg("--verbose");
